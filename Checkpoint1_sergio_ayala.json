@@ -1,0 +1,263 @@
+{
+  "name": "Checkpoint 1 - Agente Base",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -688,
+        -48
+      ],
+      "id": "b2d01d0f-71dc-4561-ba14-21030d71b620",
+      "name": "When chat message received",
+      "webhookId": "759a1cc4-3a56-4525-9406-08cc5a2de25b"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a ## ROL\nSos un Asistente de Calificación de Leads de una empresa de servicios de automatización con IA.\n\n## ÁMBITO\nAnalizás mensajes entrantes de potenciales clientes. Solo calificás y registrás. No vendés, no negociás, no prometés plazos ni precios.\n\n## OBJETIVO\nExtraer: nombre, empresa, necesidad, presupuesto. Calificar el lead como ALTO, MEDIO o BAJO y registrarlo en la planilla de leads.\n\n## REGLAS\n- Si faltan datos, registrá \"No informado\". No inventes nada.\n- Registrá cada lead una sola vez.\n- Calificación ALTO: necesidad clara y presupuesto informado. MEDIO: necesidad clara sin presupuesto. BAJO: mensaje vago.\n- Usá lenguaje neutro. No uses \"todos/todas\", \"les\", \"@\" ni la \"e\" inclusiva.\n\n## LO QUE NO PODÉS HACER\n- Enviar correos, borrar o modificar filas existentes.\n- Dar presupuestos, descuentos o fechas de entrega.\n- Responder temas ajenos a la calificación de leads.\n\n## ESCALAMIENTO\nSi el mensaje contiene un reclamo, un tema legal o una solicitud fuera de ámbito, no registres nada. Respondé: \"ESCALAR A HUMANO\" y el motivo.helpful assistant",
+          "maxIterations": 6,
+          "returnIntermediateSteps": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -480,
+        -48
+      ],
+      "id": "2324b2aa-f020-433c-b831-aa583b5e5c55",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "claude-sonnet-5",
+          "cachedResultName": "Claude Sonnet 5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.6,
+      "position": [
+        -576,
+        192
+      ],
+      "id": "5914b89f-dbb4-4499-919f-7957662e2eb0",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "1ArCoQKoa0YFRVZv",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Usá esta herramienta para registrar un lead en la planilla de leads de la empresa. Activala solo cuando el mensaje del usuario contenga una consulta comercial concreta (alguien interesado en contratar servicios de automatización, chatbots o integraciones) y ya hayas extraído o completado con \"No informado\" los campos nombre, empresa, necesidad y presupuesto, y calculado la calificación (ALTO, MEDIO, BAJO) con su motivo. No la uses para saludos, preguntas generales, reclamos, spam ni consultas fuera del ámbito comercial. No la uses dos veces para el mismo lead.",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "11oR-_GQT6zflFh0ujpJyqccx4vTqUPWkR9JUebzWfew",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11oR-_GQT6zflFh0ujpJyqccx4vTqUPWkR9JUebzWfew/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/11oR-_GQT6zflFh0ujpJyqccx4vTqUPWkR9JUebzWfew/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fecha": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Fecha', ``, 'string') }}",
+            "Nombre": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nombre', ``, 'string') }}",
+            "Empresa": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Empresa', ``, 'string') }}",
+            "Necesidad": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Necesidad', ``, 'string') }}",
+            "Presupuesto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Presupuesto', ``, 'string') }}",
+            "Calificación": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Calificaci_n', ``, 'string') }}",
+            "Motivo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Motivo', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Empresa",
+              "displayName": "Empresa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Necesidad",
+              "displayName": "Necesidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Presupuesto",
+              "displayName": "Presupuesto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Calificación",
+              "displayName": "Calificación",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Motivo",
+              "displayName": "Motivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        208
+      ],
+      "id": "e193eb87-4057-4555-88e6-eb86fa8bdd79",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "gL1AFMeOlV8vAqj5",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "ayala.sergio@gmail.com",
+        "subject": "=Reporte Agente Leads - {{ $now.format('dd/MM/yyyy HH:mm') }}",
+        "emailType": "text",
+        "message": "=Entrada: {{ $('When chat message received').item.json.chatInput }}\n\nRespuesta del agente: {{ $json.output }}\n\nPasos intermedios (log): {{ JSON.stringify($json.intermediateSteps, null, 2) }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        -48
+      ],
+      "id": "69040fdc-5466-4d48-a6ec-0909aff65c23",
+      "name": "Send a message",
+      "webhookId": "bbc298b4-f6e3-4faf-aa9b-2c564f68e1b0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "jK5xheQBbiSVZaSL",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d701e01a-4e12-4316-9074-84ef37ff9d0e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e5b7c98563de60eb27fdd64ff9733ec78226a47c80abe013cd22738c3b379374"
+  },
+  "nodeGroups": [],
+  "id": "ygPndWi0s5XcXDjP",
+  "tags": []
+}
